@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music Player</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-image: url("bg2.webp");
+        background-size: cover;
+        background-position: center;
+        font-family: Arial, sans-serif;
+      }
+
+      .player {
+        background-color: rgba(192, 16, 231, 0.9);
+        padding: 100px;
+        border-radius: 25px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        width: 300px;
+      }
+
+      .song-info {
+        margin-bottom: 20px;
+      }
+
+      .controls button {
+        background-color: #fdfdfd;
+        border: none;
+        color: #000000;
+        padding: 10px 20px;
+        margin: 0 5px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s;
+      }
+
+      .controls button:hover {
+        background-color: #50ff47;
+      }
+
+      .slider {
+        width: 150%;
+        margin: 15px 0;
+      }
+
+      .slider-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #fffdfd;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="player">
+      <div class="song-info">
+        <h2 id="song-title">Song Title</h2>
+        <p id="artist">Artist</p>
+      </div>
+      <audio
+        id="audio"
+        src="[iSongs.info] 01 - Amma Pade Jola Pata.mp3"
+      ></audio>
+      <div class="controls">
+        <button id="prev">Prev</button>
+        <button id="play">Play</button>
+        <button id="next">Next</button>
+      </div>
+      <div class="slider-label">
+        <span>Seek</span>
+        <input
+          type="range"
+          id="seek"
+          class="slider"
+          min="0"
+          max="100"
+          value="0"
+        />
+      </div>
+      <div class="slider-label">
+        <span>Volume</span>
+        <input
+          type="range"
+          id="volume"
+          class="slider"
+          min="0"
+          max="1"
+          step="0.01"
+          value="1"
+        />
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const audio = document.getElementById("audio");
+        const playButton = document.getElementById("play");
+        const prevButton = document.getElementById("prev");
+        const nextButton = document.getElementById("next");
+        const seekSlider = document.getElementById("seek");
+        const volumeSlider = document.getElementById("volume");
+        const songTitle = document.getElementById("song-title");
+        const artist = document.getElementById("artist");
+
+        const songs = [
+          {
+            title: "Song 1",
+            artist: "Amma song",
+            src: "[iSongs.info] 01 - Amma Pade Jola Pata.mp3",
+          },
+          {
+            title: "Song 2",
+            artist: "fear song",
+            src: "[iSongs.info] 02 - Fear Song.mp3",
+          },
+
+          {
+            title: "Song 3",
+            artist: "picchiga nachesavu",
+            src: "[iSongs.info] 03 - Picchiga Nacchesave.mp3",
+          },
+          {
+            title: "Song 4",
+            artist: "mirchi song",
+            src: "[iSongs.info] 09 - Mirchi copy.mp3",
+          },
+        ];
+
+        let currentSongIndex = 0;
+
+        function loadSong(song) {
+          songTitle.textContent = song.title;
+          artist.textContent = song.artist;
+          audio.src = song.src;
+          seekSlider.value = 0;
+          seekSlider.max = 100;
+        }
+
+        function playSong() {
+          audio.play();
+          playButton.textContent = "Pause";
+          updateSongInfo();
+        }
+
+        function pauseSong() {
+          audio.pause();
+          playButton.textContent = "Play";
+        }
+
+        function updateSongInfo() {
+          songTitle.textContent = songs[currentSongIndex].title;
+          artist.textContent = songs[currentSongIndex].artist;
+        }
+
+        playButton.addEventListener("click", () => {
+          if (audio.paused) {
+            playSong();
+          } else {
+            pauseSong();
+          }
+        });
+
+        prevButton.addEventListener("click", () => {
+          currentSongIndex =
+            (currentSongIndex - 1 + songs.length) % songs.length;
+          loadSong(songs[currentSongIndex]);
+          playSong();
+        });
+
+        nextButton.addEventListener("click", () => {
+          currentSongIndex = (currentSongIndex + 1) % songs.length;
+          loadSong(songs[currentSongIndex]);
+          playSong();
+        });
+
+        audio.addEventListener("timeupdate", () => {
+          const progress = (audio.currentTime / audio.duration) * 100;
+          seekSlider.value = progress;
+        });
+
+        seekSlider.addEventListener("input", () => {
+          const seekTime = (seekSlider.value / 100) * audio.duration;
+          audio.currentTime = seekTime;
+        });
+
+        volumeSlider.addEventListener("input", () => {
+          audio.volume = volumeSlider.value;
+        });
+
+        loadSong(songs[currentSongIndex]);
+      });
+    </script>
+  </body>
+</html>
